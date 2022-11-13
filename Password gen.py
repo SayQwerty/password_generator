@@ -10,15 +10,16 @@ def is_answer_valid(word):
           return is_answer_valid(input('Пожалуйста, отвечайте только ДА или НЕТ' + '\n'))
 
 # Проверяем, что на вход подается натуральное число, чтобы сгенерировать длину пароля
-def is_number_valid(num):
+# в качестве минимальной длины сюда приходит переменная condition_counter из функции questions
+def is_number_valid(num, min_lenght):
      if num.isdigit():
           num = int(num)
-          if num >= 1:
+          if num >= min_lenght:
                return num
           else:
-               return is_number_valid(input('Этого слишком мало, попробуйте длину побольше.' + '\n'))
+               return is_number_valid(input(f'Этого слишком мало, попробуйте длину побольше. Минимальное количество символов для пароля с данными условиями: {min_lenght}' + '\n'), min_lenght)
      else:
-          return is_number_valid(input('Это не длина, которую мы ищем. Пожалуйста, укажите желаемую длину пароля.' + '\n'))
+          return is_number_valid(input(f'Это не та длина, которую мы ищем. Пожалуйста, укажите желаемую длину пароля. Минимальное количество символов для пароля с данными условиями: {min_lenght}' + '\n'), min_lenght)
 
 def questions():  # Задаем параметры для генерации пароля
 
@@ -32,20 +33,25 @@ def questions():  # Задаем параметры для генерации п
      flag_lowercase_letters = False
      flag_digits = False
      flag_punctuation = False
-     
+
+     condition_counter = 0
      chars = ''  # Сюда добавляем символы, которые будут использоваться при генерации
 
      if is_answer_valid(input('Будет ли пароль включать прописные буквы?' + '\n').lower()):
           chars += uppercase_letters
+          condition_counter += 1
           flag_uppercase_letters = True
      if is_answer_valid(input('Будет ли пароль включать строчные буквы?' + '\n').lower()):
           chars += lowercase_letters
+          condition_counter += 1
           flag_lowercase_letters = True
      if is_answer_valid(input('Будет ли пароль включать цифры?' + '\n').lower()):
           chars += digits
+          condition_counter += 1
           flag_digits = True
      if is_answer_valid(input('Будет ли пароль включать дополнительные символы?' + '\n').lower()):
           chars += punctuation
+          condition_counter += 1
           flag_punctuation = True
      if not is_answer_valid(input('Будет ли пароль включать неоднозначные символы? (Например, О и 0)' + '\n').lower()):
           for c in homonyms:  # использую переменную, чтобы все строки хранились рядом
@@ -57,7 +63,7 @@ def questions():  # Задаем параметры для генерации п
           return questions()
      
      password_lenght = is_number_valid(
-         input('Укажите желаемую длину пароля' + '\n'))
+         input('Укажите желаемую длину пароля' + '\n'), condition_counter)
      
      password = check_password(
          password_lenght, flag_digits, flag_lowercase_letters, flag_uppercase_letters, flag_punctuation, chars)
